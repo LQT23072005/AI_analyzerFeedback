@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Analytics Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Sentiment Distribution</h5>
+            </div>
+            <div class="card-body">
+                <div id="sentimentChart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if insights %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>AI-Generated Business Insights</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    {{ insights|safe|replace('\n', '<br>')|replace('**', '<strong>')|replace('**', '</strong>') }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>All Feedback</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Feedback</th>
+                                <th>Sentiment</th>
+                                <th>Score</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fb in feedback %}
+                            <tr>
+                                <td>{{ fb.customer_name or 'Anonymous' }}</td>
+                                <td>{{ fb.feedback_text[:100] }}{% if fb.feedback_text|length > 100 %}...{% endif %}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if fb.sentiment_label == 'Positive' else 'danger' if fb.sentiment_label == 'Negative' else 'secondary' }}">
+                                        {{ fb.sentiment_label or 'Not Processed' }}
+                                    </span>
+                                </td>
+                                <td>{{ "%.3f"|format(fb.sentiment_score) if fb.sentiment_score else 'N/A' }}</td>
+                                <td>
+                                    {% if fb.sentiment_label %}
+                                    <button class="btn btn-sm btn-primary" onclick="generateResponse({{ fb.id }})">Generate Response</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Chart data
+var chartData = {{ chart_data|safe }};
+
+// Create sentiment distribution chart
+if (chartData.sentiment_labels.length > 0) {
+    var trace = {
+        x: chartData.sentiment_labels,
+        y: chartData.sentiment_counts,
+        type: 'bar',
+        marker: {
+            color: chartData.sentiment_labels.map(function(label) {
+                return label === 'Positive' ? 'green' : 
+                       label === 'Negative' ? 'red' : 'gray';
+            })
+        }
+    };
+    
+    var layout = {
+        title: 'Feedback Sentiment Distribution',
+        xaxis: { title: 'Sentiment' },
+        yaxis: { title: 'Count' }
+    };
+    
+    Plotly.newPlot('sentimentChart', [trace], layout);
+}
+
+// Generate response function
+function generateResponse(feedbackId) {
+    fetch('/generate_response/' + feedbackId)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Generated Response:\n\n' + data.response);
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Error generating response');
+        });
+}
+</script>
+{% endblock %}

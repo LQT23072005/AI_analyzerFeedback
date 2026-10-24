@@ -1,0 +1,11 @@
+{% extends "base_enhanced.html" %}{% block title %}Lấy đánh giá trực tiếp từ Etsy{% endblock %}{% block content %}
+<section style="max-width:850px;margin:auto;background:white;padding:32px;border:1px solid #dce3ed;border-radius:16px;color:#172338;line-height:1.8">
+<h1 style="font-size:29px;font-weight:750">Lấy đánh giá trực tiếp từ Etsy</h1>
+<p>Tiện ích Cốc Cốc mở đánh giá của đúng sản phẩm, chuyển trang và thu thập mặc định 30 đánh giá.</p>
+<h2 style="font-size:20px;margin-top:24px">Cài một lần trong Cốc Cốc</h2>
+<ol style="list-style:decimal;padding-left:24px"><li>Mở <strong>coccoc://extensions</strong> trong thanh địa chỉ.</li><li>Bật <strong>Chế độ dành cho nhà phát triển</strong> (Developer mode).</li><li>Bấm <strong>Tải tiện ích đã giải nén</strong> (Load unpacked).</li><li>Chọn thư mục <strong>etsy-review-collector</strong> bên trong thư mục dự án.</li><li>Ghim tiện ích <strong>VINAZON Etsy Review Collector</strong> để tiện sử dụng.</li></ol>
+<h2 style="font-size:20px;margin-top:24px">Mỗi lần lấy đánh giá</h2>
+<ol style="list-style:decimal;padding-left:24px"><li>Mở sản phẩm Etsy và bấm biểu tượng tiện ích.</li><li>Dán link nếu cần, chọn số lượng (mặc định 30), bấm <strong>Mở sản phẩm và bắt đầu</strong>.</li><li>Theo dõi bảng tiến độ ở góc phải. Giữ tab đang mở. Nếu Etsy yêu cầu xác minh, tự hoàn tất rồi bấm <strong>Tiếp tục</strong>.</li><li>Nếu nút mở đánh giá thay đổi, mở <strong>View all reviews for this item</strong> và chọn <strong>Reviews for this item</strong> rồi bấm Tiếp tục. Không chọn đánh giá toàn cửa hàng.</li><li>Bấm <strong>Chuyển sang phân tích</strong>. Ứng dụng sẽ mở file và chọn cột <strong>feedback_text</strong>. Kiểm tra mẫu, thêm mục tiêu rồi bấm phân tích.</li></ol>
+<p style="background:#f0f2ff;padding:16px;border-radius:10px">Có thể bấm <strong>Tải CSV</strong> để giữ dữ liệu trước khi đóng tab. Nếu sản phẩm ít đánh giá, Etsy chặn hoặc không tìm thấy trang tiếp, tiện ích báo số lượng thực tế; không tự bổ sung đánh giá từ sản phẩm khác.</p>
+<p>Các đánh giá giống hệt nội dung có thể được ứng dụng phân tích loại trùng. Số dòng đã thu thập và số đánh giá hợp lệ sau làm sạch được hiển thị riêng.</p>
+<a href="/product" style="color:#5447ce;font-weight:700">← Trở về tạo báo cáo</a></section>{% endblock %}

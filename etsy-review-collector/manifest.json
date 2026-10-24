@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "VINAZON Etsy Review Collector",
+  "version": "1.0.4",
+  "description": "Thu thập đánh giá của đúng sản phẩm Etsy đang mở và gửi đến ứng dụng phân tích cục bộ.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": ["https://www.etsy.com/*", "https://etsy.com/*", "http://127.0.0.1:5000/*"],
+  "action": {"default_popup": "popup.html", "default_title": "Lấy đánh giá Etsy"},
+  "background": {"service_worker": "background.js"}
+}

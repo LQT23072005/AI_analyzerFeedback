@@ -1,0 +1,307 @@
+{% extends "base_enhanced.html" %}
+
+{% block title %}Bulk Upload - AI Feedback Analyzer{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Header -->
+    <div class="text-center mb-12">
+        <h1 class="text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
+            <i class="bi bi-cloud-upload-fill"></i> Bulk Feedback Upload & Analysis
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300">
+            Upload CSV, Excel, TXT, or JSON files for automatic AI analysis
+        </p>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Upload Section -->
+        <div class="card p-8">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white flex items-center">
+                <i class="bi bi-file-earmark-arrow-up mr-3 text-indigo-600"></i>
+                Upload File
+            </h2>
+            
+            <form id="bulkUploadForm" enctype="multipart/form-data">
+                <div class="space-y-6">
+                    <!-- File Input -->
+                    <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-indigo-500 transition">
+                        <input type="file" id="fileInput" name="file" accept=".csv,.xlsx,.xls,.txt,.json" class="hidden" onchange="fileSelected(this)">
+                        <label for="fileInput" class="cursor-pointer">
+                            <i class="bi bi-cloud-upload text-6xl text-gray-400 dark:text-gray-500 mb-4"></i>
+                            <p class="text-lg font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                Click to select file or drag and drop
+                            </p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                Supported: CSV, Excel (.xlsx, .xls), TXT, JSON
+                            </p>
+                        </label>
+                        <p id="fileName" class="mt-4 text-sm font-medium text-indigo-600 dark:text-indigo-400"></p>
+                    </div>
+                    
+                    <div>
+                        <label for="feedbackColumn">Cột chứa nội dung đánh giá</label>
+                        <select id="feedbackColumn" class="w-full p-3 border rounded text-gray-900" required disabled>
+                            <option value="">Chọn file trước</option>
+                        </select>
+                        <p id="columnPreview" class="mt-2 text-sm whitespace-pre-wrap"></p>
+                    </div>
+                    <!-- Supported Formats Info -->
+                    <div class="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-lg">
+                        <p class="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">
+                            <i class="bi bi-info-circle"></i> Supported Column Names:
+                        </p>
+                        <ul class="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                            <li>• <strong>Feedback:</strong> feedback, comment, review, text, message</li>
+                            <li>• <strong>Customer:</strong> name, customer_name, customer</li>
+                            <li>• <strong>Email:</strong> email, mail, customer_email</li>
+                            <li>• <strong>Rating:</strong> rating, score, stars</li>
+                        </ul>
+                        <p class="text-xs text-blue-600 dark:text-blue-400 mt-2">
+                            Kiểm tra nội dung mẫu trước khi phân tích: phải là lời đánh giá, không phải ngày tháng hoặc mã sản phẩm.
+                        </p>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full btn-primary py-4 text-lg">
+                        <i class="bi bi-robot mr-2"></i>
+                        Analyze All with AI
+                        <span id="uploadSpinner" class="hidden ml-2">
+                            <i class="bi bi-arrow-repeat animate-spin"></i>
+                        </span>
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Sample Files -->
+            <div class="mt-6">
+                <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-3">
+                    <i class="bi bi-download"></i> Sample Files:
+                </h3>
+                <div class="flex flex-wrap gap-3">
+                    <a href="/static/sample_feedback.csv" download class="px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/40 transition text-sm">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> sample.csv
+                    </a>
+                    <button onclick="showFormatExamples()" class="px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-800/40 transition text-sm">
+                        <i class="bi bi-code-square"></i> Format Examples
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden">
+            <div class="card p-8">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white flex items-center">
+                    <i class="bi bi-check-circle-fill mr-3 text-green-600"></i>
+                    Upload Results
+                </h2>
+                
+                <div id="uploadResults"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- File Format Examples (initially hidden) -->
+    <div id="formatExamples" class="hidden mt-8 card p-8">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
+            <i class="bi bi-code-slash"></i> File Format Examples
+        </h2>
+        
+        <div class="space-y-6">
+            <!-- CSV Format -->
+            <div>
+                <h3 class="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2">CSV Format</h3>
+                <pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto text-sm">customer_name,email,feedback_text,rating
+John Doe,john@example.com,"Great product! Very satisfied",5
+Jane Smith,jane@example.com,"Not happy with delivery time",2</pre>
+            </div>
+            
+            <!-- Excel Format -->
+            <div>
+                <h3 class="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2">Excel Format (.xlsx)</h3>
+                <p class="text-gray-600 dark:text-gray-300 text-sm">
+                    Same structure as CSV. Columns: customer_name, email, feedback_text, rating
+                </p>
+            </div>
+            
+            <!-- TXT Format -->
+            <div>
+                <h3 class="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2">TXT Format</h3>
+                <pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto text-sm">This product exceeded my expectations!
+The customer service was terrible.
+Average experience, nothing special.</pre>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Each line is treated as separate feedback</p>
+            </div>
+            
+            <!-- JSON Format -->
+            <div>
+                <h3 class="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-2">JSON Format</h3>
+                <pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto text-sm">[
+  {
+    "customer_name": "John Doe",
+    "email": "john@example.com",
+    "feedback_text": "Excellent service!",
+    "rating": 5
+  }
+]</pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function fileSelected(input) {
+        const select = document.getElementById('feedbackColumn');
+        const preview = document.getElementById('columnPreview');
+        select.disabled = true;
+        select.replaceChildren();
+        preview.textContent = 'Đang đọc các cột...';
+        const fileName = input.files[0]?.name;
+        if (fileName) {
+            document.getElementById('fileName').textContent = `Selected: ${fileName}`;
+            document.getElementById('fileName').classList.add('block');
+            try {
+                const form = new FormData();
+                form.append('file', input.files[0]);
+                form.append('preview', '1');
+                const response = await fetch('/bulk_upload', {method: 'POST', body: form});
+                const data = await response.json();
+                if (!data.success) throw new Error(data.error);
+                select.add(new Option('Chọn cột chứa đánh giá', ''));
+                data.columns.forEach(col => select.add(new Option(col, col)));
+                select.value = data.suggested_column || '';
+                select.disabled = false;
+                select.onchange = () => { preview.textContent = (data.samples[select.value] || []).join('\n\n'); };
+                select.onchange();
+            } catch (error) {
+                preview.textContent = 'Không đọc được file: ' + error.message;
+            }
+        }
+    }
+    
+    function showFormatExamples() {
+        const examples = document.getElementById('formatExamples');
+        examples.classList.toggle('hidden');
+    }
+    
+    document.getElementById('bulkUploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const fileInput = document.getElementById('fileInput');
+        if (!fileInput.files[0]) {
+            showToast('Please select a file', 'error');
+            return;
+        }
+        
+        const spinner = document.getElementById('uploadSpinner');
+        spinner.classList.remove('hidden');
+        
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        const column = document.getElementById('feedbackColumn');
+        if (column.disabled || !column.value) {
+            spinner.classList.add('hidden');
+            showToast('Hãy chọn cột chứa đánh giá trước', 'error');
+            return;
+        }
+        formData.append('feedback_column', column.value);
+        
+        try {
+            const response = await fetch('/bulk_upload', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                displayResults(data);
+                showToast(`Successfully processed ${data.processed} feedbacks!`, 'success');
+            } else {
+                showToast(data.error || 'Upload failed', 'error');
+            }
+        } catch (error) {
+            showToast('Error: ' + error.message, 'error');
+        } finally {
+            spinner.classList.add('hidden');
+        }
+    });
+    
+    function displayResults(data) {
+        const resultsSection = document.getElementById('resultsSection');
+        const resultsDiv = document.getElementById('uploadResults');
+        
+        let html = `
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                    <div>
+                        <p class="text-2xl font-bold text-green-700 dark:text-green-300">${data.processed}</p>
+                        <p class="text-sm text-green-600 dark:text-green-400">Feedbacks Processed</p>
+                    </div>
+                    <i class="bi bi-check-circle text-4xl text-green-600"></i>
+                </div>
+        `;
+        
+        if (data.errors && data.errors.length > 0) {
+            html += `
+                <div class="p-4 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                    <p class="font-semibold text-red-700 dark:text-red-300 mb-2">
+                        <i class="bi bi-exclamation-triangle"></i> ${data.errors.length} Errors:
+                    </p>
+                    <ul class="text-sm text-red-600 dark:text-red-400 space-y-1">
+                        ${data.errors.slice(0, 5).map(error => `<li>• ${error}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+        
+        if (data.results && data.results.length > 0) {
+            html += `
+                <div class="space-y-2">
+                    <p class="font-semibold text-gray-700 dark:text-gray-200">Sample Results:</p>
+            `;
+            
+            data.results.forEach(result => {
+                const sentimentColor = {
+                    'Positive': 'green',
+                    'Negative': 'red',
+                    'Neutral': 'gray'
+                }[result.sentiment] || 'gray';
+                
+                html += `
+                    <div class="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg flex justify-between items-center">
+                        <span class="text-sm text-gray-600 dark:text-gray-300">Row ${result.row}</span>
+                        <div class="flex space-x-2">
+                            <span class="px-2 py-1 bg-${sentimentColor}-200 dark:bg-${sentimentColor}-900/30 text-${sentimentColor}-800 dark:text-${sentimentColor}-200 rounded text-xs">
+                                ${result.sentiment}
+                            </span>
+                            <span class="px-2 py-1 bg-purple-200 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 rounded text-xs">
+                                ${result.emotion}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+        }
+        
+        html += `
+                <div class="flex space-x-3 mt-6">
+                    <a href="/dashboard" class="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-center font-medium transition">
+                        <i class="bi bi-graph-up"></i> View Dashboard
+                    </a>
+                    <button onclick="location.reload()" class="flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition">
+                        <i class="bi bi-arrow-repeat"></i> Upload More
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        resultsDiv.innerHTML = html;
+        resultsSection.classList.remove('hidden');
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+{% endblock %}

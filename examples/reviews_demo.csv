@@ -1,0 +1,7 @@
+feedback_text,rating,review_date,source_url,listing_id,source_page,review_id,product_variant
+"The engraving is clear and the wood feels solid.",5,2026-01-10,https://www.etsy.com/listing/1234567890/demo,1234567890,1,demo-01,Walnut
+"The gift looks beautiful but the packaging arrived torn.",3,2026-01-11,https://www.etsy.com/listing/1234567890/demo,1234567890,1,demo-02,Walnut
+"Shipping took longer than the estimated delivery date.",2,2026-01-12,https://www.etsy.com/listing/1234567890/demo,1234567890,1,demo-03,Oak
+"Please offer a larger font for the personalized name.",4,2026-01-13,https://www.etsy.com/listing/1234567890/demo,1234567890,1,demo-04,Oak
+"The hanging chain broke when I opened the package.",1,2026-01-14,https://www.etsy.com/listing/1234567890/demo,1234567890,2,demo-05,Walnut
+"Customer service replied quickly and corrected the name.",5,2026-01-15,https://www.etsy.com/listing/1234567890/demo,1234567890,2,demo-06,Walnut

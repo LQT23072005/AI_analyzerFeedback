@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1>AI Customer Feedback Analyzer</h1>
+        <p class="lead">Analyze customer feedback and generate actionable insights using AI</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h4>{{ stats.total_feedback }}</h4>
+                <p>Total Feedback</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h4>{{ stats.processed_feedback }}</h4>
+                <p>Processed</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h4>{{ stats.avg_rating or 0 }}</h4>
+                <p>Avg Rating</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h4>{{ stats.recent_feedback }}</h4>
+                <p>Last 7 Days</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Recent Feedback</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_feedback %}
+                    {% for feedback in recent_feedback %}
+                        <div class="border-bottom mb-2 pb-2">
+                            <strong>{{ feedback.customer_name or 'Anonymous' }}</strong>
+                            <span class="badge bg-{{ 'success' if feedback.sentiment_label == 'Positive' else 'danger' if feedback.sentiment_label == 'Negative' else 'secondary' }}">
+                                {{ feedback.sentiment_label or 'Not Processed' }}
+                            </span>
+                            <p class="mb-1">{{ feedback.feedback_text[:100] }}...</p>
+                            <small class="text-muted">{{ feedback.created_at }}</small>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No feedback available. <a href="{{ url_for('upload_feedback') }}">Upload some feedback</a> to get started.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,278 @@
+{% extends "base_enhanced.html" %}
+
+{% block title %}Admin Dashboard - AI Feedback Analyzer{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
+            <i class="bi bi-shield-lock-fill"></i> Admin Dashboard
+        </h1>
+        <p class="text-gray-600 dark:text-gray-300 mt-2">
+            Comprehensive analytics and system overview
+        </p>
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <div class="card p-6 gradient-primary text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm opacity-90 mb-1">Total Users</p>
+                    <p class="text-3xl font-bold">{{ total_users }}</p>
+                </div>
+                <i class="bi bi-people-fill text-4xl opacity-80"></i>
+            </div>
+        </div>
+        
+        <div class="card p-6 gradient-success text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm opacity-90 mb-1">Total Feedbacks</p>
+                    <p class="text-3xl font-bold">{{ stats.total_feedback }}</p>
+                </div>
+                <i class="bi bi-chat-dots-fill text-4xl opacity-80"></i>
+            </div>
+        </div>
+        
+        <div class="card p-6 gradient-secondary text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm opacity-90 mb-1">Processed</p>
+                    <p class="text-3xl font-bold">{{ stats.processed_feedback }}</p>
+                </div>
+                <i class="bi bi-check-circle-fill text-4xl opacity-80"></i>
+            </div>
+        </div>
+        
+        <div class="card p-6 bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm opacity-90 mb-1">Avg Rating</p>
+                    <p class="text-3xl font-bold">{{ "%.1f"|format(stats.avg_rating) }}</p>
+                </div>
+                <i class="bi bi-star-fill text-4xl opacity-80"></i>
+            </div>
+        </div>
+        
+        <div class="card p-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm opacity-90 mb-1">This Week</p>
+                    <p class="text-3xl font-bold">{{ stats.recent_feedback }}</p>
+                </div>
+                <i class="bi bi-calendar-week-fill text-4xl opacity-80"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Sentiment Distribution -->
+        <div class="card p-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+                <i class="bi bi-pie-chart-fill text-indigo-600"></i> Sentiment Distribution
+            </h2>
+            <canvas id="adminSentimentChart" class="max-h-64"></canvas>
+            <div class="mt-4 grid grid-cols-3 gap-4 text-center">
+                {% for row in sentiment_summary %}
+                <div>
+                    <p class="text-2xl font-bold 
+                        {% if row.sentiment_label == 'Positive' %}text-green-600
+                        {% elif row.sentiment_label == 'Negative' %}text-red-600
+                        {% else %}text-gray-600{% endif %}">
+                        {{ row.count }}
+                    </p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ row.sentiment_label }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Weekly Trend -->
+        <div class="card p-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+                <i class="bi bi-graph-up text-purple-600"></i> 7-Day Feedback Trend
+            </h2>
+            <canvas id="trendChart" class="max-h-64"></canvas>
+        </div>
+    </div>
+    
+    <!-- Detailed Metrics -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Sentiment Metrics -->
+        <div class="card p-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+                <i class="bi bi-bar-chart-line text-blue-600"></i> Sentiment Metrics
+            </h2>
+            <div class="space-y-4">
+                {% for row in sentiment_summary %}
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span class="font-medium text-gray-700 dark:text-gray-200">{{ row.sentiment_label }}</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">
+                            Avg Score: {{ "%.2f"|format(row.avg_score) }}
+                        </span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                        <div class="h-3 rounded-full
+                            {% if row.sentiment_label == 'Positive' %}bg-green-500
+                            {% elif row.sentiment_label == 'Negative' %}bg-red-500
+                            {% else %}bg-gray-500{% endif %}"
+                            style="width: {{ (row.count / stats.total_feedback * 100)|round|int }}%">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- System Health -->
+        <div class="card p-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+                <i class="bi bi-cpu text-green-600"></i> System Health
+            </h2>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i class="bi bi-check-circle-fill text-2xl text-green-600"></i>
+                        <div>
+                            <p class="font-medium text-gray-800 dark:text-white">Database</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Connected</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 bg-green-600 text-white rounded-full text-xs font-medium">
+                        Healthy
+                    </span>
+                </div>
+                
+                <div class="flex justify-between items-center p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i class="bi bi-robot text-2xl text-green-600"></i>
+                        <div>
+                            <p class="font-medium text-gray-800 dark:text-white">AI Service</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Groq LLM Active</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 bg-green-600 text-white rounded-full text-xs font-medium">
+                        Online
+                    </span>
+                </div>
+                
+                <div class="flex justify-between items-center p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i class="bi bi-cloud-check text-2xl text-blue-600"></i>
+                        <div>
+                            <p class="font-medium text-gray-800 dark:text-white">API Status</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">All endpoints active</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 bg-blue-600 text-white rounded-full text-xs font-medium">
+                        Active
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="card p-6">
+        <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+            <i class="bi bi-lightning-fill text-yellow-600"></i> Quick Actions
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <a href="/export/csv" class="p-4 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/40 rounded-lg transition text-center">
+                <i class="bi bi-file-earmark-spreadsheet text-3xl text-green-600 mb-2"></i>
+                <p class="font-medium text-gray-800 dark:text-white">Export CSV</p>
+            </a>
+            <a href="/export/pdf" class="p-4 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-800/40 rounded-lg transition text-center">
+                <i class="bi bi-file-earmark-pdf text-3xl text-red-600 mb-2"></i>
+                <p class="font-medium text-gray-800 dark:text-white">Export PDF</p>
+            </a>
+            <a href="/dashboard" class="p-4 bg-purple-100 dark:bg-purple-900/30 hover:bg-purple-200 dark:hover:bg-purple-800/40 rounded-lg transition text-center">
+                <i class="bi bi-graph-up text-3xl text-purple-600 mb-2"></i>
+                <p class="font-medium text-gray-800 dark:text-white">Analytics</p>
+            </a>
+            <a href="/analyze" class="p-4 bg-indigo-100 dark:bg-indigo-900/30 hover:bg-indigo-200 dark:hover:bg-indigo-800/40 rounded-lg transition text-center">
+                <i class="bi bi-stars text-3xl text-indigo-600 mb-2"></i>
+                <p class="font-medium text-gray-800 dark:text-white">Analyze</p>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sentiment Chart
+    const sentimentCtx = document.getElementById('adminSentimentChart').getContext('2d');
+    new Chart(sentimentCtx, {
+        type: 'doughnut',
+        data: {
+            labels: [{% for row in sentiment_summary %}'{{ row.sentiment_label }}'{% if not loop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                data: [{% for row in sentiment_summary %}{{ row.count }}{% if not loop.last %},{% endif %}{% endfor %}],
+                backgroundColor: [
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(239, 68, 68, 0.8)',
+                    'rgba(156, 163, 175, 0.8)'
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827',
+                        font: { size: 14, weight: 'bold' }
+                    }
+                }
+            }
+        }
+    });
+    
+    // Trend Chart
+    const trendCtx = document.getElementById('trendChart').getContext('2d');
+    new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: [{% for t in trends %}'{{ t.date }}'{% if not loop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Feedbacks',
+                data: [{% for t in trends %}{{ t.count }}{% if not loop.last %},{% endif %}{% endfor %}],
+                borderColor: 'rgba(99, 102, 241, 1)',
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                tension: 0.4,
+                fill: true,
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827'
+                    },
+                    grid: { color: 'rgba(156, 163, 175, 0.2)' }
+                },
+                x: {
+                    ticks: {
+                        color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827'
+                    },
+                    grid: { color: 'rgba(156, 163, 175, 0.2)' }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

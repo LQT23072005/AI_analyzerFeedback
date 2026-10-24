@@ -1,0 +1,37 @@
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Runtime and local databases
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*.db
+*.db-*
+*.sqlite*
+database_backups/
+instance/
+uploads/*
+!uploads/.gitkeep
+*.log
+logs/
+*.bak
+*.tmp
+
+# Development artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+etsy-page-debug.json

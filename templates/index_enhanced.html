@@ -1,0 +1,249 @@
+{% extends "base_enhanced.html" %}
+
+{% block title %}Home - AI Feedback Analyzer{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Hero Section -->
+    <div class="text-center mb-16">
+        <div class="mb-8">
+            <i class="bi bi-robot text-8xl bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"></i>
+        </div>
+        <h1 class="text-6xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
+            AI-Driven Customer Feedback Analyzer
+        </h1>
+        <p class="text-2xl text-gray-700 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+            Transform customer feedback into actionable insights with advanced AI agents powered by Groq LLM
+        </p>
+        <div class="flex justify-center space-x-4">
+            <a href="/analyze" class="btn-primary text-lg px-8 py-4">
+                <i class="bi bi-stars"></i> Start Analyzing
+            </a>
+            <a href="/dashboard" class="px-8 py-4 bg-white/20 dark:bg-gray-800/40 hover:bg-white/30 dark:hover:bg-gray-800/60 text-gray-800 dark:text-white rounded-lg font-semibold transition backdrop-blur-sm">
+                <i class="bi bi-graph-up"></i> View Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <!-- Features Grid -->
+    <div class="mb-16">
+        <h2 class="text-3xl font-bold text-center text-gray-800 dark:text-white mb-10">
+            🚀 Powerful Features
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Feature 1 -->
+            <div class="card p-6 hover:scale-105 transition-transform">
+                <div class="text-4xl mb-4">🎯</div>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">
+                    Sentiment Analysis
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Advanced AI-powered sentiment detection with positive, negative, and neutral classification
+                </p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="card p-6 hover:scale-105 transition-transform">
+                <div class="text-4xl mb-4">😊</div>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">
+                    Emotion Detection
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Identify customer emotions: happy, frustrated, satisfied, angry, and more
+                </p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="card p-6 hover:scale-105 transition-transform">
+                <div class="text-4xl mb-4">🔑</div>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">
+                    Keyword Extraction
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Automatically extract important keywords and topics from feedback
+                </p>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="card p-6 hover:scale-105 transition-transform">
+                <div class="text-4xl mb-4">☁️</div>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">
+                    Word Cloud
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Beautiful visual representation of frequently mentioned terms
+                </p>
+            </div>
+            
+            <!-- Feature 5 -->
+            <div class="card p-6 hover:scale-105 transition-transform">
+                <div class="text-4xl mb-4">🌍</div>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">
+                    Multilingual Support
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Auto-detect language and translate feedback to English for analysis
+                </p>
+            </div>
+            
+            <!-- Feature 6 -->
+            <div class="card p-6 hover:scale-105 transition-transform">
+                <div class="text-4xl mb-4">🎤</div>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">
+                    Voice Input
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Capture customer feedback via voice using speech recognition
+                </p>
+            </div>
+            
+            <!-- Feature 7 -->
+            <div class="card p-6 hover:scale-105 transition-transform">
+                <div class="text-4xl mb-4">🤖</div>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">
+                    AI Response Generator
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Generate personalized, professional responses to customer feedback
+                </p>
+            </div>
+            
+            <!-- Feature 8 -->
+            <div class="card p-6 hover:scale-105 transition-transform">
+                <div class="text-4xl mb-4">💡</div>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">
+                    Business Insights
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    AI-generated actionable recommendations for business improvement
+                </p>
+            </div>
+            
+            <!-- Feature 9 -->
+            <div class="card p-6 hover:scale-105 transition-transform">
+                <div class="text-4xl mb-4">📊</div>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">
+                    Export Reports
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Download comprehensive reports in CSV and PDF formats
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Overview -->
+    <div class="mb-16">
+        <h2 class="text-3xl font-bold text-center text-gray-800 dark:text-white mb-10">
+            📈 Platform Statistics
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="card p-8 text-center">
+                <div class="text-5xl font-bold gradient-primary bg-clip-text text-transparent mb-2">
+                    {{ stats.total_feedback }}
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 font-medium">Total Feedbacks</p>
+            </div>
+            <div class="card p-8 text-center">
+                <div class="text-5xl font-bold gradient-success bg-clip-text text-transparent mb-2">
+                    {{ stats.processed_feedback }}
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 font-medium">Processed</p>
+            </div>
+            <div class="card p-8 text-center">
+                <div class="text-5xl font-bold gradient-secondary bg-clip-text text-transparent mb-2">
+                    {{ "%.1f"|format(stats.avg_rating) }}★
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 font-medium">Avg Rating</p>
+            </div>
+            <div class="card p-8 text-center">
+                <div class="text-5xl font-bold text-purple-600 mb-2">
+                    {{ stats.recent_feedback }}
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 font-medium">Last 7 Days</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Feedback Preview -->
+    {% if recent_feedback %}
+    <div class="mb-16">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-800 dark:text-white">
+                📝 Recent Feedback
+            </h2>
+            <a href="/dashboard" class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
+                View All <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for fb in recent_feedback %}
+            <div class="card p-6">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-2">
+                        <i class="bi bi-person-circle text-2xl text-gray-600 dark:text-gray-400"></i>
+                        <div>
+                            <p class="font-semibold text-gray-800 dark:text-white">
+                                {{ fb.customer_name or 'Anonymous' }}
+                            </p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                {{ fb.created_at[:10] }}
+                            </p>
+                        </div>
+                    </div>
+                    {% if fb.sentiment_label %}
+                    <span class="px-2 py-1 rounded-full text-xs font-medium
+                        {% if fb.sentiment_label == 'Positive' %}bg-green-200 dark:bg-green-900/30 text-green-800 dark:text-green-200
+                        {% elif fb.sentiment_label == 'Negative' %}bg-red-200 dark:bg-red-900/30 text-red-800 dark:text-red-200
+                        {% else %}bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200{% endif %}">
+                        {{ fb.sentiment_label }}
+                    </span>
+                    {% endif %}
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 text-sm">
+                    {{ fb.feedback_text[:150] }}{% if fb.feedback_text|length > 150 %}...{% endif %}
+                </p>
+                {% if fb.rating %}
+                <div class="mt-3 flex items-center">
+                    <span class="text-yellow-500">
+                        {% for i in range(fb.rating) %}★{% endfor %}
+                        {% for i in range(5 - fb.rating) %}☆{% endfor %}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Technology Stack -->
+    <div class="card p-10 text-center">
+        <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-8">
+            ⚡ Powered By Free AI & Open Source
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="p-4">
+                <div class="text-4xl mb-2">🐍</div>
+                <p class="font-bold text-gray-800 dark:text-white">Flask</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Web Framework</p>
+            </div>
+            <div class="p-4">
+                <div class="text-4xl mb-2">🦾</div>
+                <p class="font-bold text-gray-800 dark:text-white">Groq LLM</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Free AI Model</p>
+            </div>
+            <div class="p-4">
+                <div class="text-4xl mb-2">🎨</div>
+                <p class="font-bold text-gray-800 dark:text-white">Tailwind CSS</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Modern Styling</p>
+            </div>
+            <div class="p-4">
+                <div class="text-4xl mb-2">📊</div>
+                <p class="font-bold text-gray-800 dark:text-white">Chart.js</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Visualizations</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

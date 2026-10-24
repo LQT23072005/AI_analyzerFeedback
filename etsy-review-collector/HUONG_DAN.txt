@@ -1,0 +1,17 @@
+VINAZON ETSY REVIEW COLLECTOR
+
+1. Cốc Cốc: mở coccoc://extensions
+2. Bật Chế độ dành cho nhà phát triển (Developer mode).
+3. Bấm Tải tiện ích đã giải nén (Load unpacked).
+4. Chọn chính thư mục etsy-review-collector chứa manifest.json.
+5. Mở trang sản phẩm Etsy. Bấm tiện ích, đặt số lượng 30 và bắt đầu.
+6. Xem tiến độ trong trang. Nếu yêu cầu xác minh, tự hoàn tất rồi Tiếp tục.
+7. Chọn Tải CSV hoặc Chuyển sang phân tích (cần chạy app_enhanced.py).
+
+Tiện ích thao tác với nội dung hiển thị trong trình duyệt, không dùng API riêng
+của Etsy, không giải CAPTCHA và không đổi IP để né chặn.
+Khi không lấy đủ, tiện ích báo số lượng thực tế và lý do dừng.
+Giữ tab mở; trước khi tải lại/đóng tab nên lưu CSV vì tiến độ nằm trong tab.
+Dữ liệu chỉ được chuyển đến http://127.0.0.1:5000 khi bấm Chuyển sang phân tích.
+Nếu giao diện Etsy thay đổi cần cập nhật bộ đọc. Bản này cần kiểm tra thực tế
+trên phiên Etsy của bạn vì môi trường kiểm thử tự động bị Etsy trả về 403.

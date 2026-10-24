@@ -1,0 +1,98 @@
+{% extends "base_enhanced.html" %}
+{% block title %}Cải thiện sản phẩm từ phản hồi khách hàng{% endblock %}
+{% block content %}
+<style>
+.pi{max-width:1150px;margin:auto;color:#172338}.pi h1{font-size:34px;font-weight:800;line-height:1.2}.pi h2{font-size:23px;font-weight:750}.pi h3{font-size:18px;font-weight:700}.pi p{line-height:1.6}.pi .box{background:#fff;border:1px solid #dce3ed;border-radius:16px;padding:25px;margin-bottom:20px;box-shadow:0 5px 20px #22334a06}.pi label{display:block;font-weight:650;margin:15px 0 6px}.pi input,.pi select,.pi textarea{width:100%;padding:12px;border:1px solid #b9c7d8;border-radius:8px;background:white;color:#172338}.pi button,.pi .download{display:inline-block;background:#3646c6;color:white;padding:12px 20px;border-radius:9px;font-weight:650;margin-top:16px}.pi button:disabled{opacity:.5;cursor:wait}.pi .muted{color:#58677c;font-size:14px}.pi .grid{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}.pi .tag{display:inline-block;padding:4px 9px;border-radius:6px;background:#edf1f8;font-size:13px;margin:8px 6px 10px 0}.pi blockquote{border-left:3px solid #8794d9;padding:9px 14px;background:#f5f7fb;margin-top:10px;white-space:pre-wrap}.pi .issue{border-top:4px solid #d97739}.pi .strength{border-top:4px solid #319581}.pi .error{color:#a12626;background:#fff2f0;padding:14px;border-radius:8px}.pi progress{width:100%;margin:12px 0}.pi .history{display:block;padding:12px 0;border-bottom:1px solid #e2e8f0;text-align:left;background:none;color:#3646c6;width:100%;margin:0}.pi .notice{background:#eef3ff;padding:16px;border-radius:10px;margin:15px 0}.pi details{margin-top:12px}.pi summary{cursor:pointer;font-weight:600}.pi .action{margin:14px 0;padding-top:12px;border-top:1px solid #e4e8ef}@media(max-width:750px){.pi .grid{grid-template-columns:1fr}.pi h1{font-size:27px}}
+.pi #productForm{margin-top:22px}.pi #productForm>label{font-size:14px;margin-top:24px;margin-bottom:9px}.pi #context{min-height:118px;padding:16px 18px;line-height:1.65;border:1px solid #dce2ef;border-radius:12px;background:#fafbfe;resize:vertical;font-size:14px;transition:border-color .2s,box-shadow .2s}.pi #context::placeholder{color:#8894aa}.pi #context:focus,.pi #column:focus{outline:none;border-color:#7774e8;box-shadow:0 0 0 4px #7567e914;background:white}.pi .field-note{font-size:12px;color:#7a879b;margin:7px 0 0}.pi .upload-zone{position:relative;display:flex;align-items:center;gap:16px;padding:23px 20px;border:1.5px dashed #b9b9e4;border-radius:14px;background:linear-gradient(115deg,#f7f6ff,#fafbff);transition:background .2s,border-color .2s}.pi .upload-zone:hover,.pi .upload-zone:focus-within{border-color:#6559d8;background:#f0edff}.pi .upload-zone:focus-within{box-shadow:0 0 0 4px #7567e914}.pi .upload-zone #file{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;padding:0}.pi .upload-symbol{flex:none;width:48px;height:48px;background:white;color:#6559d8;display:grid;place-items:center;border:1px solid #e6e3fb;border-radius:13px;font-size:23px}.pi .upload-copy{min-width:0;flex:1}.pi .upload-copy strong{display:block;font-size:14px;font-weight:650;overflow-wrap:anywhere}.pi .upload-copy span{display:block;font-size:12px;color:#7a8096;margin-top:5px}.pi .choose-file{padding:7px 11px;border:1px solid #dedaf4;border-radius:7px;background:white;color:#6252c7;font-size:12px;font-weight:650;flex:none}.pi #column{appearance:none;padding:14px 42px 14px 16px;border-color:#dce2ef;border-radius:11px;font-size:14px;background:#fafbfe url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23747f95' stroke-width='1.7'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E") no-repeat right 16px center}.pi #column:disabled{color:#8d97aa;background-color:#f4f6fa;cursor:not-allowed}.pi .sample-panel{margin-top:13px;padding:14px;background:#f7f8fc;border:1px solid #e8ecf4;border-radius:11px}.pi .sample-panel[hidden]{display:none}.pi .sample-heading{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:650;color:#596780;margin-bottom:8px}.pi .sample-count{font-weight:400;color:#8993a6}.pi #samples{max-height:220px;overflow:auto;display:grid;gap:8px}.pi .sample-item{background:white;border:1px solid #e9edf5;border-radius:8px;padding:11px 12px;font-size:13px;line-height:1.6;color:#566178;white-space:pre-wrap;overflow-wrap:anywhere}.pi .sample-item small{display:block;font-size:10px;color:#8a93ab;letter-spacing:.5px;margin-bottom:4px}.pi #submit{width:100%;margin-top:22px;padding:15px 18px;background:linear-gradient(110deg,#5145ce,#7060df);border:1px solid #6555d2;border-radius:11px;box-shadow:0 4px 10px #6555d21a;font-size:14px;transition:transform .15s,box-shadow .15s}.pi #submit:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 7px 16px #6555d22b}.pi #submit:disabled{background:#a4a4cd;border-color:#a4a4cd;opacity:.8;box-shadow:none;cursor:not-allowed}.pi #message{font-size:13px;line-height:1.6;color:#63728b}.pi #message:empty{display:none}@media(max-width:450px){.pi .upload-zone{gap:10px;padding:18px 13px}.pi .choose-file{display:none}.pi .upload-symbol{width:40px;height:40px}}
+</style>
+<div class="pi">
+<p class="muted" style="letter-spacing:1px;margin-bottom:12px">TIẾNG NÓI KHÁCH HÀNG → QUYẾT ĐỊNH SẢN PHẨM</p>
+<h1>Khách hàng đang giúp bạn cải thiện điều gì?</h1>
+<p style="margin:15px 0 28px">Tìm điểm mạnh cần giữ, vấn đề cần sửa và hành động có bình luận từ đánh giá thực tế.</p>
+<div class="grid">
+<section class="box"><h2>Tạo báo cáo sản phẩm</h2>
+<form id="productForm">
+<div class="notice"><strong>Lấy đánh giá trực tiếp từ Etsy</strong><p class="muted" style="margin:6px 0">Dùng tiện ích Cốc Cốc để mở đánh giá sản phẩm, chuyển trang và lấy từ 30 đánh giá.</p><a href="/product/collector" style="font-weight:650;color:#5447ce">Cài tiện ích và xem cách sử dụng →</a></div>
+<label for="context">Sản phẩm và mục tiêu</label><textarea id="context" rows="3" maxlength="2000" aria-describedby="contextNote" placeholder="Bạn bán sản phẩm gì? Bạn muốn cải thiện điều gì?&#10;Ví dụ: Quà gỗ khắc tên cho mẹ — cải thiện chất lượng và trải nghiệm tặng quà."></textarea>
+<p id="contextNote" class="field-note">Thêm bối cảnh để đề xuất sát với sản phẩm của bạn hơn.</p>
+<label for="file">File đánh giá khách hàng</label>
+<div class="upload-zone">
+ <span class="upload-symbol" aria-hidden="true"><i class="bi bi-file-earmark-arrow-up"></i></span>
+ <div class="upload-copy"><strong id="chosenFilename">Chọn file đánh giá của bạn</strong><span id="chosenMeta">CSV, Excel, JSON hoặc TXT</span></div>
+ <span class="choose-file" aria-hidden="true">Chọn file</span>
+ <input id="file" type="file" accept=".csv,.xlsx,.xls,.json,.txt" aria-describedby="fileNote" required>
+</div>
+<p id="fileNote" class="field-note">Tối đa 16 MB · 1.000 đánh giá · Một sản phẩm cho mỗi báo cáo.</p>
+<label for="column">Cột chứa lời đánh giá</label><select id="column" required disabled><option value="">Chọn file trước</option></select>
+<div class="sample-panel" id="samplePanel" hidden><div class="sample-heading"><span>Xem trước nội dung</span><span class="sample-count">Tối đa 3 dòng mẫu</span></div><div id="samples"></div></div>
+<button id="submit" disabled>Tìm cơ hội cải thiện sản phẩm</button>
+<p id="message" role="status" style="margin-top:12px"></p>
+</form></section>
+<aside class="box"><h2>Bạn sẽ nhận được</h2>
+<div class="action"><h3>01 · Điểm mạnh cần giữ</h3><p class="muted">Khía cạnh được khách khen, số lượt nhắc và lời khách nói.</p></div>
+<div class="action"><h3>02 · Vấn đề và yêu cầu</h3><p class="muted">Tách chất lượng, thiết kế, đóng gói, giao hàng và dịch vụ.</p></div>
+<div class="action"><h3>03 · Hành động ưu tiên</h3><p class="muted">Đề xuất cụ thể cùng cách kiểm chứng hiệu quả. Phân biệt bình luận với ý tưởng cần thử nghiệm.</p></div>
+</aside></div>
+<section id="report" hidden></section>
+<section class="box"><h2>Báo cáo đã lưu</h2><p class="muted">Chọn để xem lại. Tải cùng dữ liệu và mục tiêu sẽ mở báo cáo cũ, tránh gọi AI trùng.</p>
+{% for r in reports %}<button type="button" class="history" data-report="{{ r.id }}">{{ r.filename }} · {{ r.reviews|length }} đánh giá · {{ {'complete':'Hoàn tất','running':'Đang xử lý','failed':'Chưa hoàn tất'}[r.status] }}</button>{% else %}<p class="muted">Chưa có báo cáo. Dữ liệu cảm xúc cũ được giữ nguyên và không đưa vào báo cáo mới.</p>{% endfor %}</section>
+</div>
+<script>
+const file=document.getElementById('file'), column=document.getElementById('column'), samples=document.getElementById('samples'), submit=document.getElementById('submit'), message=document.getElementById('message'), panel=document.getElementById('report');
+let timer=null, samplesByColumn={}, sequence=0;
+const escapeHTML = value => String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+file.addEventListener('change',async()=>{
+ const current=++sequence;submit.disabled=true;column.disabled=true;column.replaceChildren();samples.textContent='';document.getElementById('samplePanel').hidden=true;message.textContent='Đang đọc file...';
+ document.getElementById('chosenFilename').textContent=file.files[0]?.name || 'Chọn file đánh giá của bạn';
+ document.getElementById('chosenMeta').textContent=file.files[0] ? `${(file.files[0].size/1024).toFixed(1)} KB · Bấm để đổi file` : 'CSV, Excel, JSON hoặc TXT';
+ if(!file.files[0])return;
+ try{const form=new FormData();form.append('file',file.files[0]);const response=await fetch('/product/preview',{method:'POST',body:form});const data=await response.json();if(current!==sequence)return;if(!data.success)throw Error(data.error);
+ samplesByColumn=data.samples;column.add(new Option('Chọn cột và kiểm tra mẫu bên dưới',''));data.columns.forEach(c=>column.add(new Option(c,c)));column.value=data.suggested;column.disabled=false;column.dispatchEvent(new Event('change'));message.textContent=`Đã đọc ${data.rows} dòng. Kiểm tra đúng lời đánh giá trước khi phân tích.`;
+ }catch(error){if(current===sequence)message.textContent=error.message;}
+});
+column.addEventListener('change',()=>{const values=samplesByColumn[column.value]||[];samples.replaceChildren();values.forEach((text,index)=>{const card=document.createElement('div');card.className='sample-item';const label=document.createElement('small');label.textContent=`MẪU ${index+1}`;card.append(label,document.createTextNode(text));samples.append(card);});document.getElementById('samplePanel').hidden=!values.length;submit.disabled=!column.value;});
+document.getElementById('productForm').addEventListener('submit',async event=>{
+ event.preventDefault();submit.disabled=true;message.textContent='Đang gửi file...';
+ try{const form=new FormData();form.append('file',file.files[0]);form.append('column',column.value);form.append('context',document.getElementById('context').value);const response=await fetch('/product/reports',{method:'POST',body:form});const data=await response.json();if(!data.success)throw Error(data.error);message.textContent=data.reused?'Đang mở báo cáo đã có.':'Đã bắt đầu. Bạn có thể xem tiến độ bên dưới.';watch(data.id);}
+ catch(error){message.textContent=error.message;submit.disabled=false;}
+});
+async function watch(id){
+ clearTimeout(timer);panel.hidden=false;
+ try{const response=await fetch('/product/reports/'+encodeURIComponent(id));const r=await response.json();if(!response.ok)throw Error(r.error);render(r);if(r.status==='running')timer=setTimeout(()=>watch(id),2500);else submit.disabled=!column.value;}
+ catch(error){panel.innerHTML='<div class="box error">'+escapeHTML(error.message)+'</div>';submit.disabled=!column.value;}
+}
+function render(r){
+ let html=`<div class="box"><h2>${escapeHTML(r.filename)}</h2><p class="muted">Cột: ${escapeHTML(r.column)} · ${r.reviews.length} đánh giá hợp lệ / ${r.total_rows} dòng · Bỏ qua: ${r.skipped.empty||0} trống, ${r.skipped.invalid||0} không phải lời đánh giá, ${r.skipped.duplicate||0} trùng nội dung.</p>`;
+ if(r.manual_updated_at)html+='<p class="notice">Báo cáo đã được admin chỉnh sửa thủ công; nội dung sửa không được AI phân tích lại.</p>';
+ if(r.status==='running'){panel.innerHTML=html+`<progress value="${r.processed}" max="${r.reviews.length}"></progress><p>Đã xử lý ${r.processed}/${r.reviews.length} đánh giá. Khi Groq giới hạn, hệ thống tự chờ và thử lại. Giữ ứng dụng đang chạy.</p></div>`;return;}
+ if(r.status==='failed'){panel.innerHTML=html+`<p class="error">${escapeHTML(r.error)}</p><p>Chưa có báo cáo hoàn chỉnh. Chọn lại cùng file để thử lại; không có kết quả Neutral giả.</p></div>`;return;}
+ const issues=r.groups.filter(g=>g.kind==='issue'), requests=r.groups.filter(g=>g.kind==='request'), strengths=r.groups.filter(g=>g.kind==='strength');
+ html+=`<p class="notice">${issues.length ? 'Phát hiện '+issues.length+' nhóm khía cạnh có vấn đề. Xem bình luận và hành động bên dưới.' : 'Chưa có bình luận về vấn đề sản phẩm trong tập đánh giá này. Điều này không chứng minh sản phẩm không có lỗi; cần thêm phản hồi đa dạng.'}</p><p class="muted">Số lượt nhắc tính theo đánh giá duy nhất trong từng nhóm; một đánh giá có thể thuộc nhiều nhóm. Ưu tiên dựa trên mức ảnh hưởng AI đánh giá và tần suất: lỗi nghiêm trọng → Cao; từ 3 đánh giá → Vừa; còn lại → Theo dõi. Đây là gợi ý cần đối chiếu thực tế.</p><div style="display:flex;flex-wrap:wrap;gap:10px"><a class="download" href="/product/reports/${r.id}/export-report" target="_blank" rel="noopener">Xem báo cáo dễ đọc / in PDF</a><a class="download" href="/product/reports/${r.id}/export-data">Tải đầy đủ CSV (ZIP)</a><a class="download" href="/product/reports/${r.id}/export">Tải kế hoạch CSV</a></div><p class="muted">Gói đầy đủ gồm tổng quan, kế hoạch, bình luận và toàn bộ đánh giá gốc kèm số sao, ngày, link nếu có trong nguồn.</p></div>`;
+ for(const [title,groups,type] of [['Vấn đề cần cải thiện',issues,'issue'],['Yêu cầu khách hàng',requests,'issue'],['Điểm mạnh cần giữ',strengths,'strength']]){
+ html+=`<h2 style="margin:25px 0 14px">${title}</h2>`;
+ if(!groups.length)html+='<div class="box muted">Chưa có bình luận cụ thể trong dữ liệu này.</div>';
+ groups.forEach(g=>{html+=`<article class="box ${type}"><h3>${escapeHTML(g.category)}</h3><span class="tag">${g.count}/${r.reviews.length} đánh giá · ${g.share}%</span>${g.kind==='strength'?'':`<span class="tag">Ưu tiên: ${g.priority}</span>`}<details open><summary>Bình luận từ khách hàng</summary>`;
+ g.evidence.forEach(e=>{html+=`<blockquote><strong>Dòng ${e.review_id} · ${escapeHTML(e.topic)}</strong><br>“${escapeHTML(e.quote)}”</blockquote>`;});html+='</details><details><summary>Hành động đề xuất và cách kiểm chứng</summary>';
+ g.actions.forEach(a=>{html+=`<div class="action"><p><strong>Đề xuất:</strong> ${escapeHTML(a.action)}</p><p class="muted"><strong>Kiểm chứng:</strong> ${escapeHTML(a.measurement)}</p></div>`;});html+='</details></article>';});
+ }
+ html+='<details class="box"><summary>Đối chiếu toàn bộ đánh giá nguồn</summary>';r.reviews.forEach(review=>html+=`<blockquote><strong>Dòng ${review.id}</strong><br>${escapeHTML(review.text)}</blockquote>`);panel.innerHTML=html+'</details>';
+}
+document.querySelectorAll('[data-report]').forEach(button=>button.addEventListener('click',()=>{watch(button.dataset.report);panel.scrollIntoView({behavior:'smooth'});}));
+</script>
+<script>
+(async()=>{
+ const token=new URLSearchParams(location.search).get('web_import');if(!token)return;
+ message.textContent='Đang nhận đánh giá từ Etsy…';
+ try{
+  const response=await fetch('/product/web-import/'+encodeURIComponent(token)+'/file');
+  if(!response.ok){const data=await response.json();throw Error(data.error);}
+  const listing=response.headers.get('X-Listing-Id');
+  const blob=await response.blob(),transfer=new DataTransfer();
+  transfer.items.add(new File([blob],`etsy-${listing}-web.csv`,{type:'text/csv'}));file.files=transfer.files;
+  const contextInput=document.getElementById('context');if(!contextInput.value)contextInput.value=`Nguồn đánh giá: https://www.etsy.com/listing/${listing}. Mục tiêu: tìm cơ hội cải tiến sản phẩm và trải nghiệm khách hàng.`;
+  file.dispatchEvent(new Event('change'));
+  history.replaceState(null,'',location.pathname);
+ }catch(error){message.textContent=error.message;}
+})();
+</script>
+{% endblock %}

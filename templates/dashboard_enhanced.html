@@ -1,0 +1,375 @@
+{% extends "base_enhanced.html" %}
+
+{% block title %}Dashboard - AI Feedback Analyzer{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Header with Export Buttons -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <i class="bi bi-graph-up-arrow"></i> Analytics Dashboard
+            </h1>
+            <p class="text-gray-600 dark:text-gray-300 mt-2">
+                Comprehensive feedback insights and trends
+            </p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="/export/csv" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition font-medium">
+                <i class="bi bi-file-earmark-spreadsheet"></i> CSV
+            </a>
+            <a href="/export/excel" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium">
+                <i class="bi bi-file-earmark-excel"></i> Excel
+            </a>
+            <a href="/export/pdf" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium">
+                <i class="bi bi-file-earmark-pdf"></i> PDF
+            </a>
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Feedback -->
+        <div class="card p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Feedbacks</p>
+                    <p class="text-3xl font-bold text-gray-800 dark:text-white">{{ stats.total_feedback }}</p>
+                </div>
+                <div class="p-4 bg-indigo-100 dark:bg-indigo-900/30 rounded-full">
+                    <i class="bi bi-chat-dots-fill text-3xl text-indigo-600"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Processed -->
+        <div class="card p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Processed</p>
+                    <p class="text-3xl font-bold text-gray-800 dark:text-white">{{ stats.processed_feedback }}</p>
+                </div>
+                <div class="p-4 bg-green-100 dark:bg-green-900/30 rounded-full">
+                    <i class="bi bi-check-circle-fill text-3xl text-green-600"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Average Rating -->
+        <div class="card p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Avg Rating</p>
+                    <p class="text-3xl font-bold text-gray-800 dark:text-white">{{ "%.1f"|format(stats.avg_rating) }} ★</p>
+                </div>
+                <div class="p-4 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
+                    <i class="bi bi-star-fill text-3xl text-yellow-600"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent (7 days) -->
+        <div class="card p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Last 7 Days</p>
+                    <p class="text-3xl font-bold text-gray-800 dark:text-white">{{ stats.recent_feedback }}</p>
+                </div>
+                <div class="p-4 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+                    <i class="bi bi-calendar-week-fill text-3xl text-purple-600"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Sentiment Distribution Chart -->
+        <div class="card p-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+                <i class="bi bi-pie-chart-fill text-indigo-600"></i> Sentiment Distribution
+            </h2>
+            <canvas id="sentimentChart" class="max-h-64"></canvas>
+        </div>
+        
+        <!-- Keywords Chart -->
+        <div class="card p-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+                <i class="bi bi-bar-chart-fill text-purple-600"></i> Top Keywords
+            </h2>
+            <canvas id="keywordsChart" class="max-h-64"></canvas>
+        </div>
+    </div>
+    
+    <!-- Word Cloud -->
+    {% if wordcloud_img %}
+    <div class="card p-6 mb-8">
+        <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+            <i class="bi bi-cloud-fill text-blue-600"></i> Feedback Word Cloud
+        </h2>
+        <div class="flex justify-center">
+            <img src="{{ wordcloud_img }}" alt="Word Cloud" class="max-w-full rounded-lg shadow-lg">
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Business Insights -->
+    {% if insights %}
+    <div class="card p-6 mb-8">
+        <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+            <i class="bi bi-lightbulb-fill text-yellow-600"></i> AI-Generated Business Insights
+        </h2>
+        <div class="space-y-4">
+            {% if insights.key_themes %}
+            <div>
+                <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-2">🎯 Key Themes:</h3>
+                <ul class="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-1">
+                    {% for theme in insights.key_themes %}
+                    <li>{{ theme }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            {% if insights.recommendations %}
+            <div>
+                <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-2">💡 Recommendations:</h3>
+                <ul class="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-1">
+                    {% for rec in insights.recommendations %}
+                    <li>{{ rec }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            {% if insights.priority_areas %}
+            <div>
+                <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-2">🚨 Priority Areas:</h3>
+                <ul class="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-1">
+                    {% for priority in insights.priority_areas %}
+                    <li>{{ priority }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            {% if insights.positive_highlights %}
+            <div>
+                <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-2">✨ Positive Highlights:</h3>
+                <ul class="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-1">
+                    {% for highlight in insights.positive_highlights %}
+                    <li>{{ highlight }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            {% if insights.summary %}
+            <div class="p-4 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
+                <p class="text-gray-700 dark:text-gray-200">
+                    <strong>Summary:</strong> {{ insights.summary }}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Recent Feedback Table -->
+    <div class="card p-6">
+        <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">
+            <i class="bi bi-list-ul text-green-600"></i> Recent Feedback
+        </h2>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-gray-300 dark:border-gray-700">
+                        <th class="text-left py-3 px-4 text-gray-700 dark:text-gray-200">Customer</th>
+                        <th class="text-left py-3 px-4 text-gray-700 dark:text-gray-200">Feedback</th>
+                        <th class="text-left py-3 px-4 text-gray-700 dark:text-gray-200">Sentiment</th>
+                        <th class="text-left py-3 px-4 text-gray-700 dark:text-gray-200">Date</th>
+                        <th class="text-left py-3 px-4 text-gray-700 dark:text-gray-200">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fb in feedback %}
+                    <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                        <td class="py-3 px-4 text-gray-800 dark:text-gray-200">
+                            {{ fb.customer_name or 'Anonymous' }}
+                        </td>
+                        <td class="py-3 px-4 text-gray-600 dark:text-gray-300">
+                            {{ fb.feedback_text[:80] }}{% if fb.feedback_text|length > 80 %}...{% endif %}
+                        </td>
+                        <td class="py-3 px-4">
+                            {% if fb.sentiment_label == 'Positive' %}
+                            <span class="px-3 py-1 bg-green-200 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-sm font-medium">
+                                😊 Positive
+                            </span>
+                            {% elif fb.sentiment_label == 'Negative' %}
+                            <span class="px-3 py-1 bg-red-200 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-full text-sm font-medium">
+                                😞 Negative
+                            </span>
+                            {% else %}
+                            <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-sm font-medium">
+                                😐 Neutral
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4 text-gray-600 dark:text-gray-300 text-sm">
+                            {{ fb.created_at[:10] }}
+                        </td>
+                        <td class="py-3 px-4">
+                            <button onclick="generateResponse({{ fb.id }})" 
+                                    class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition text-sm">
+                                <i class="bi bi-robot"></i> Response
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Response Modal -->
+<div id="responseModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+    <div class="card p-8 max-w-2xl w-full mx-4">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white">
+                <i class="bi bi-robot text-indigo-600"></i> AI Generated Response
+            </h3>
+            <button onclick="closeModal()" class="text-2xl text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+                &times;
+            </button>
+        </div>
+        <div id="modalResponseText" class="p-4 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg text-gray-800 dark:text-gray-200 mb-4">
+            Loading...
+        </div>
+        <div class="flex space-x-3">
+            <button onclick="copyModalResponse()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">
+                <i class="bi bi-clipboard"></i> Copy
+            </button>
+            <button onclick="closeModal()" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const chartData = {{ chart_data|safe }};
+    
+    // Sentiment Distribution Chart
+    const sentimentCtx = document.getElementById('sentimentChart').getContext('2d');
+    new Chart(sentimentCtx, {
+        type: 'doughnut',
+        data: {
+            labels: chartData.sentiment_labels,
+            datasets: [{
+                data: chartData.sentiment_counts,
+                backgroundColor: [
+                    'rgba(16, 185, 129, 0.8)',  // Green for Positive
+                    'rgba(239, 68, 68, 0.8)',   // Red for Negative
+                    'rgba(156, 163, 175, 0.8)'  // Gray for Neutral
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    // Keywords Chart
+    const keywordsCtx = document.getElementById('keywordsChart').getContext('2d');
+    const keywordLabels = chartData.keywords.map(k => k[0]);
+    const keywordCounts = chartData.keywords.map(k => k[1]);
+    
+    new Chart(keywordsCtx, {
+        type: 'bar',
+        data: {
+            labels: keywordLabels,
+            datasets: [{
+                label: 'Frequency',
+                data: keywordCounts,
+                backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                borderColor: 'rgba(99, 102, 241, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827'
+                    },
+                    grid: {
+                        color: 'rgba(156, 163, 175, 0.2)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827'
+                    },
+                    grid: {
+                        color: 'rgba(156, 163, 175, 0.2)'
+                    }
+                }
+            }
+        }
+    });
+    
+    // Generate response function
+    async function generateResponse(feedbackId) {
+        document.getElementById('responseModal').classList.remove('hidden');
+        document.getElementById('modalResponseText').textContent = 'Generating response...';
+        
+        try {
+            const response = await fetch(`/api/feedback/${feedbackId}/response`);
+            const data = await response.json();
+            
+            if (data.success) {
+                document.getElementById('modalResponseText').textContent = data.response;
+            } else {
+                document.getElementById('modalResponseText').textContent = 'Error: ' + data.error;
+            }
+        } catch (error) {
+            document.getElementById('modalResponseText').textContent = 'Error: ' + error.message;
+        }
+    }
+    
+    function closeModal() {
+        document.getElementById('responseModal').classList.add('hidden');
+    }
+    
+    function copyModalResponse() {
+        const text = document.getElementById('modalResponseText').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Response copied!', 'success');
+        });
+    }
+</script>
+{% endblock %}

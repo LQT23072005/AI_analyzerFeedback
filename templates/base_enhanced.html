@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" class="{{ 'dark' if theme == 'dark' else '' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Feedback Analyzer{% endblock %}</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <style>
+        /* Dark mode variables */
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #06b6d4;
+        }
+        
+        .dark {
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+        }
+        
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+        }
+        
+        body.dark {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 50%, #1f2937 100%);
+            color: var(--text-primary);
+        }
+        
+        body.light {
+            background: linear-gradient(135deg, #e0e7ff 0%, #fce7f3 50%, #ddd6fe 100%);
+            color: var(--text-primary);
+        }
+        
+        .gradient-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+        
+        .gradient-secondary {
+            background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+        }
+        
+        .gradient-success {
+            background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+        }
+        
+        .card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .dark .card {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+        }
+        
+        .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: #6366f1;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #6366f1;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{{ theme }}">
+    <!-- Navigation -->
+    <nav class="backdrop-blur-md bg-white/10 dark:bg-gray-800/30 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <a href="/" class="flex items-center space-x-3">
+                    <i class="bi bi-chat-heart-fill text-4xl gradient-primary bg-clip-text text-transparent"></i>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+                        Product Insights
+                    </span>
+                </a>
+                
+                <!-- Navigation Links -->
+                <div class="hidden md:flex space-x-6 items-center">
+                    <a href="/" class="nav-link text-gray-700 dark:text-gray-200 hover:text-indigo-600 font-medium">
+                        <i class="bi bi-house-fill"></i> Sản phẩm
+                    </a>
+                    <a href="/analyze" class="nav-link text-gray-700 dark:text-gray-200 hover:text-indigo-600 font-medium">
+                        <i class="bi bi-search"></i> Phân tích
+                    </a>
+                    <a href="/bulk_upload" class="nav-link text-gray-700 dark:text-gray-200 hover:text-indigo-600 font-medium">
+                        <i class="bi bi-cloud-upload"></i> Tải đánh giá
+                    </a>
+                    <a href="/dashboard" class="nav-link text-gray-700 dark:text-gray-200 hover:text-indigo-600 font-medium">
+                        <i class="bi bi-graph-up"></i> Báo cáo
+                    </a>
+                    {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                    <a href="/database" class="nav-link text-gray-700 dark:text-gray-200 hover:text-indigo-600 font-medium">Database</a>
+                    <a href="/admin" class="nav-link text-gray-700 dark:text-gray-200 hover:text-indigo-600 font-medium">
+                        <i class="bi bi-shield-check"></i> Admin
+                    </a>
+                    {% endif %}
+                    
+                    <!-- Theme Toggle -->
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:scale-110 transition">
+                        <i class="bi bi-moon-stars-fill text-xl dark:hidden"></i>
+                        <i class="bi bi-sun-fill text-xl hidden dark:inline"></i>
+                    </button>
+                    
+                    <!-- Auth -->
+                    {% if current_user.is_authenticated %}
+                    <div class="flex items-center space-x-3">
+                        <span class="text-gray-700 dark:text-gray-200">{{ current_user.username }}</span>
+                        <button onclick="logout()" class="btn-primary text-sm">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </div>
+                    {% else %}
+                    <a href="/login" class="btn-primary text-sm">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                    {% endif %}
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-2xl text-gray-700 dark:text-gray-200">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 space-y-2">
+                <a href="/" class="block py-2 px-4 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                    <i class="bi bi-house-fill"></i> Home
+                </a>
+                <a href="/analyze" class="block py-2 px-4 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                    <i class="bi bi-search"></i> Analyze
+                </a>
+                <a href="/dashboard" class="block py-2 px-4 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                    <i class="bi bi-graph-up"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        {% block content %}{% endblock %}
+    </main>
+    
+<!-- Scripts -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+        
+        // Theme toggle
+        function toggleTheme() {
+            fetch('/toggle_theme', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.documentElement.classList.toggle('dark');
+                    document.body.classList.toggle('dark');
+                    document.body.classList.toggle('light');
+                    location.reload();
+                }
+            });
+        }
+        
+        // Logout function
+        function logout() {
+            fetch('/logout')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/login';
+                }
+            });
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-20 right-6 z-50 px-6 py-4 rounded-lg shadow-lg animate-fade-in ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } text-white font-medium`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
